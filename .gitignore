@@ -1,0 +1,5 @@
+.gradle/
+build/
+jvm/build
+jvm/base-provider/build
+jvm/core/build
