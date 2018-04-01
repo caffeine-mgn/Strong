@@ -44,7 +44,21 @@ class Strong(vararg val providers: StrongProvider) {
         override val message: String = "Bean $clazz not found"
     }
 
+    /**
+     * Интерфейс профиля
+     */
     interface Profile {
         fun apply(strong: Strong)
+    }
+
+    /**
+     * Включает профили [profiles]
+     *
+     * @param profiles список прифилей, которые необходимо включить
+     */
+    fun use(vararg profiles: Profile) {
+        profiles.forEach {
+            it.apply(this)
+        }
     }
 }
