@@ -63,8 +63,7 @@ open class BaseProvider : StrongProvider {
     private val factory = HashMap<KClass<*>, IRecord<*>>()
 
 
-
-    fun <T : Any> bind(interfaces: Set<KClass<*>>, impClass: KClass<T>, scope: ScopeType, imp: () -> T) {
+    fun <T : Any> bind(vararg interfaces: KClass<*>, scope: ScopeType, imp: () -> T) {
         val record = when (scope) {
             ScopeType.SINGLETON -> SingletonRecord(imp)
             ScopeType.STATELESS -> StatelessRecord(imp)
@@ -79,20 +78,16 @@ open class BaseProvider : StrongProvider {
         }
     }
 
-    inline fun <reified T : Any> bind(vararg classes: KClass<*>, scope: ScopeType, noinline imp: () -> T) {
-        bind(interfaces = classes.toSet(), impClass = T::class, imp = imp, scope = scope)
-    }
-
     inline fun <reified T : Any> stateless(vararg classes: KClass<*>, noinline imp: () -> T) {
-        bind(interfaces = classes.toSet(), impClass = T::class, imp = imp, scope = ScopeType.STATELESS)
+        bind(interfaces = *classes, imp = imp, scope = ScopeType.STATELESS)
     }
 
     inline fun <reified T : Any> stateful(vararg classes: KClass<*>, noinline imp: () -> T) {
-        bind(interfaces = classes.toSet(), impClass = T::class, imp = imp, scope = ScopeType.STATEFUL)
+        bind(interfaces = *classes, imp = imp, scope = ScopeType.STATEFUL)
     }
 
     inline fun <reified T : Any> singleton(vararg classes: KClass<*>, noinline imp: () -> T) {
-        bind(interfaces = classes.toSet(), impClass = T::class, imp = imp, scope = ScopeType.SINGLETON)
+        bind(interfaces = *classes, imp = imp, scope = ScopeType.SINGLETON)
     }
 
     override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>): StrongProvider.Injector<T>? =
