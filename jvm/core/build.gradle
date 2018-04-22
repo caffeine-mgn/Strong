@@ -12,7 +12,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId "org.tlsys"
             artifactId 'strong-jvm'
-            version "1.0"
+            version strong_version
             from components.java
             artifact sourcesJar
 

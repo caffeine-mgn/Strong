@@ -62,3 +62,5 @@ class Strong(vararg val providers: StrongProvider) {
         }
     }
 }
+
+expect val Strong.Profile.name: String
