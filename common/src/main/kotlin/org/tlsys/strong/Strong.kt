@@ -15,12 +15,20 @@ class Strong(vararg val providers: StrongProvider) {
      * @param clazz класс бина, который требуется подключить
      * @return делегатор, который возвращает экземпляр класса [clazz]
      */
-    fun <T : Any> inject(clazz: KClass<T>) = StrongDelegator(clazz)
+    fun <T : Any> inject(clazz: KClass<T>): StrongDelegate<T> = StrongDelegateImp(clazz)
 
-    inner class StrongDelegator<out T : Any>(private val clazz: KClass<T>) {
+    /**
+     * Интерфейс делегатора
+     */
+    interface StrongDelegate<out T : Any> {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): T
+    }
+
+
+    private inner class StrongDelegateImp<out T : Any>(private val clazz: KClass<T>) : StrongDelegate<T> {
         private lateinit var injector: StrongProvider.Injector<T>
 
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
             if (!this::injector.isInitialized) {
                 injector = this@Strong.providers
                         .asSequence()
