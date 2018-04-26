@@ -64,6 +64,8 @@ open class BaseProvider : StrongProvider {
     internal class StatefulRecord<T : Any>(val f: () -> T) : IRecord<T> {
         override fun getInject(): StrongProvider.Injector<T> = object : StrongProvider.Injector<T> {
             private var imp: T? = null
+
+            @Synchronized
             override fun getBean(): T {
                 if (imp == null)
                     imp = f()
@@ -82,7 +84,7 @@ open class BaseProvider : StrongProvider {
                 else -> throw RuntimeException("Unknown Scope of class ${clazz.java.name}")
             }
 
-    fun <T : Any> bind(interfaces: Set<KClass<*>>, impClass: KClass<T>, scope: ScopeType?, imp: () -> T) {
+    fun <T : Any> bind(interfaces: Array<KClass<*>>, impClass: KClass<T>, scope: ScopeType?, imp: () -> T) {
         val record = when (scope ?: getScope(impClass)) {
             ScopeType.SINGLETON -> SingletonRecord(imp)
             ScopeType.STATELESS -> StatelessRecord(imp)
@@ -97,8 +99,23 @@ open class BaseProvider : StrongProvider {
         }
     }
 
+    /**
+     * Бинд бина
+     *
+     * @param classes классы, на которые должен возвращаться результат лямбды [imp]
+     * @param scope тип работы бизнес-объекта
+     * @param imp функция провайдер фактического объекта для включения
+     * @param T тип класса, который фактический будет возвращаться при включении
+     */
     inline fun <reified T : Any> bind(vararg classes: KClass<*>, scope: ScopeType? = null, noinline imp: () -> T) {
-        bind(interfaces = classes.toSet(), impClass = T::class, imp = imp, scope = scope)
+        bind(
+                interfaces = if (classes.isEmpty())
+                    arrayOf(T::class) as Array<KClass<*>>
+                else
+                    classes as Array<KClass<*>>,
+                impClass = T::class,
+                imp = imp,
+                scope = scope)
     }
 
     override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>): StrongProvider.Injector<T>? =
