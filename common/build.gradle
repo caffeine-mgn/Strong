@@ -1,4 +1,33 @@
 apply plugin: 'kotlin-platform-common'
+apply plugin: 'maven-publish'
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+
+        mavenJava(MavenPublication) {
+            groupId "org.tlsys"
+            artifactId 'strong-base-common'
+            version strong_version
+            from components.java
+            artifact sourcesJar
+
+            pom.withXml {
+                asNode().appendNode('description',
+                        'Strong library. https://github.com/caffeine-mgn/Strong')
+            }
+        }
+    }
+    repositories {
+        maven {
+            url System.getenv("REPO_DIR")
+        }
+    }
+}
 
 repositories {
     mavenCentral()
