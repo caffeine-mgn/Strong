@@ -120,5 +120,34 @@ open class BaseProvider : StrongProvider {
 
     override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>): StrongProvider.Injector<T>? =
             factory[clazz]?.getInject() as StrongProvider.Injector<T>
+}
 
+inline fun <reified T : Any> BaseProvider.singleton(vararg classes: KClass<*>, noinline imp: () -> T) {
+    bind(interfaces = if (classes.isEmpty())
+        arrayOf(T::class) as Array<KClass<*>>
+    else
+        classes as Array<KClass<*>>,
+            scope = BaseProvider.ScopeType.SINGLETON,
+            impClass = T::class,
+            imp = imp)
+}
+
+inline fun <reified T : Any> BaseProvider.stateless(vararg classes: KClass<*>, noinline imp: () -> T) {
+    bind(interfaces = if (classes.isEmpty())
+        arrayOf(T::class) as Array<KClass<*>>
+    else
+        classes as Array<KClass<*>>,
+            scope = BaseProvider.ScopeType.STATELESS,
+            impClass = T::class,
+            imp = imp)
+}
+
+inline fun <reified T : Any> BaseProvider.stateful(vararg classes: KClass<*>, noinline imp: () -> T) {
+    bind(interfaces = if (classes.isEmpty())
+        arrayOf(T::class) as Array<KClass<*>>
+    else
+        classes as Array<KClass<*>>,
+            scope = BaseProvider.ScopeType.STATEFUL,
+            impClass = T::class,
+            imp = imp)
 }
