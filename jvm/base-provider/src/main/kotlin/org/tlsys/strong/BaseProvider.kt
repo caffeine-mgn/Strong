@@ -119,7 +119,7 @@ open class BaseProvider : StrongProvider {
     }
 
     override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>): StrongProvider.Injector<T>? =
-            factory[clazz]?.getInject() as StrongProvider.Injector<T>
+            factory[clazz]?.getInject() as StrongProvider.Injector<T>?
 }
 
 inline fun <reified T : Any> BaseProvider.singleton(vararg classes: KClass<*>, noinline imp: () -> T) {
