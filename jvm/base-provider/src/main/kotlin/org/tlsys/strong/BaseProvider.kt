@@ -118,7 +118,7 @@ open class BaseProvider : StrongProvider {
                 scope = scope)
     }
 
-    override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>): StrongProvider.Injector<T>? =
+    override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?): StrongProvider.Injector<T>? =
             factory[clazz]?.getInject() as StrongProvider.Injector<T>?
 }
 

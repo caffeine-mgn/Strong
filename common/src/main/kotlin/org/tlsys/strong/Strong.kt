@@ -33,7 +33,7 @@ class Strong(vararg val providers: StrongProvider) {
                 injector = this@Strong.providers
                         .asSequence()
                         .map {
-                            it.getInjector(clazz = clazz, property = property as KProperty<T>)
+                            it.getInjector(clazz = clazz, property = property as KProperty<T>, thisRef = thisRef)
                         }
                         .filterNotNull()
                         .firstOrNull() ?: throw BeanNotFoundException(clazz)
