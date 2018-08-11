@@ -12,6 +12,9 @@ import kotlin.reflect.KProperty
  * Stateful
  */
 open class BaseProvider : StrongProvider {
+    override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?, params: Array<out Any?>): StrongProvider.Injector<T>? =
+            factory[clazz]?.getInject() as StrongProvider.Injector<T>
+
 
     enum class ScopeType {
         STATELESS,
@@ -90,7 +93,5 @@ open class BaseProvider : StrongProvider {
         bind(interfaces = *classes, imp = imp, scope = ScopeType.SINGLETON)
     }
 
-    override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>): StrongProvider.Injector<T>? =
-            factory[clazz]?.getInject() as StrongProvider.Injector<T>
 
 }

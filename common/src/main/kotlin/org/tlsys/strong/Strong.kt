@@ -15,7 +15,9 @@ class Strong(vararg val providers: StrongProvider) {
      * @param clazz класс бина, который требуется подключить
      * @return делегатор, который возвращает экземпляр класса [clazz]
      */
-    fun <T : Any> inject(clazz: KClass<T>): StrongDelegate<T> = StrongDelegateImp(clazz)
+    fun <T : Any> inject(clazz: KClass<T>, vararg params: Any?): StrongDelegate<T> = StrongDelegateImp(clazz = clazz, params = params)
+
+    fun <T : StrongProvider> provider(clazz: KClass<T>): T? = providers.find { clazz === it::class } as T?
 
     /**
      * Интерфейс делегатора
@@ -25,7 +27,7 @@ class Strong(vararg val providers: StrongProvider) {
     }
 
 
-    private inner class StrongDelegateImp<out T : Any>(private val clazz: KClass<T>) : StrongDelegate<T> {
+    private inner class StrongDelegateImp<out T : Any>(private val clazz: KClass<T>, val params: Array<out Any?>) : StrongDelegate<T> {
         private lateinit var injector: StrongProvider.Injector<T>
 
         override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -33,7 +35,7 @@ class Strong(vararg val providers: StrongProvider) {
                 injector = this@Strong.providers
                         .asSequence()
                         .map {
-                            it.getInjector(clazz = clazz, property = property as KProperty<T>, thisRef = thisRef)
+                            it.getInjector(clazz = clazz, property = property as KProperty<T>, thisRef = thisRef, params = params)
                         }
                         .filterNotNull()
                         .firstOrNull() ?: throw BeanNotFoundException(clazz)

@@ -24,5 +24,5 @@ interface StrongProvider {
      * @param thisRef указатель на класс, который который устанавливает зависимость от класса [clazz]
      * @return поставщик бинов для конкретного подключения бинов
      */
-    fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?): Injector<T>?
+    fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?, params: Array<out Any?>): Injector<T>?
 }
