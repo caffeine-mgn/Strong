@@ -28,6 +28,8 @@ import kotlin.reflect.KProperty
  */
 class RTLogger : StrongProvider {
     override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?, params: Array<out Any?>): StrongProvider.Injector<T>? {
+        if (clazz.java !== Logger::class.java)
+            return null
         thisRef ?: throw IllegalArgumentException("Was not setted reference to class for inject")
         return when (clazz) {
             Logger::class -> LogInjector(thisRef::class.java) as StrongProvider.Injector<T>
