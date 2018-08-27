@@ -9,15 +9,18 @@ import kotlin.reflect.KProperty
  * @param providers спислк провайдеров бинов
  */
 class Strong(vararg providers: StrongProvider) {
-    private val providers = ArrayList(providers.toList())
+    private val _providers = ArrayList(providers.toList())
 
     fun clearProviders() {
-        providers.clear()
+        _providers.clear()
     }
 
     fun addProvider(provider: StrongProvider) {
-        providers += provider
+        _providers += provider
     }
+
+    val providers: List<StrongProvider>
+        get() = _providers
 
     /**
      * Метод подключения бинов
