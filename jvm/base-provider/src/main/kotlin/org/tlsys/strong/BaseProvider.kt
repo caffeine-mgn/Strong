@@ -99,6 +99,10 @@ open class BaseProvider : StrongProvider {
         }
     }
 
+    fun clear(){
+        factory.clear()
+    }
+
     /**
      * Бинд бина
      *
