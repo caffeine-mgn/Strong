@@ -124,6 +124,12 @@ open class BaseProvider : StrongProvider {
         factory.clear()
     }
 
+    fun removeBean(clazz: KClass<*>): Boolean {
+        val en = factory.entries.find { it.key.clazz == clazz } ?: return false
+        factory.remove(en.key)
+        return true
+    }
+
     /**
      * Бинд бина
      *
@@ -145,7 +151,7 @@ open class BaseProvider : StrongProvider {
     }
 
     override fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?, params: Array<out Any?>): StrongProvider.Injector<T>? {
-        val name = params.find { it is String && it.startsWith("Base") }?.let { it as String; it.removePrefix("Base:") }
+        val name = params.find { it is String && it.startsWith("Base:") }?.let { it as String; it.removePrefix("Base:") }
         val record = factory.entries.find { it.key.clazz == clazz && it.key.name == name }
         return record?.value?.getInject() as StrongProvider.Injector<T>?
     }

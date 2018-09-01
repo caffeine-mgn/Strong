@@ -25,4 +25,8 @@ interface StrongProvider {
      * @return поставщик бинов для конкретного подключения бинов
      */
     fun <T : Any> getInjector(clazz: KClass<T>, property: KProperty<T>, thisRef: Any?, params: Array<out Any?>): Injector<T>?
+
+    fun shutdown() {
+
+    }
 }

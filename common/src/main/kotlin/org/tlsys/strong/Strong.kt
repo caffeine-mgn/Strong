@@ -12,12 +12,17 @@ class Strong(vararg providers: StrongProvider) {
     private val _providers = ArrayList(providers.toList())
 
     fun clearProviders() {
+        _providers.forEach {
+            it.shutdown()
+        }
         _providers.clear()
     }
 
     fun addProvider(provider: StrongProvider) {
         _providers += provider
     }
+
+    fun removeProvider(provider: StrongProvider) = _providers.remove(provider)
 
     val providers: List<StrongProvider>
         get() = _providers
@@ -72,7 +77,14 @@ class Strong(vararg providers: StrongProvider) {
      */
     interface Profile {
         fun apply(strong: Strong)
+        fun shutdown() {
+
+        }
     }
+
+    private val _profiles = ArrayList<Strong.Profile>()
+    val profiles: List<StrongProvider>
+        get() = profiles
 
     /**
      * Включает профили [profiles]
@@ -82,7 +94,15 @@ class Strong(vararg providers: StrongProvider) {
     fun use(vararg profiles: Profile) {
         profiles.forEach {
             it.apply(this)
+            _profiles += it
         }
+    }
+
+    fun clearProfiles() {
+        _providers.forEach {
+            it.shutdown()
+        }
+        _providers.clear()
     }
 }
 
